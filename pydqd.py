@@ -1,9 +1,6 @@
 import os
 import re
-import argparse
 from tqdm import tqdm
-from datetime import datetime
-from pyspark.sql import SparkSession
 
 
 def get_check_list(directory, cdm_schema):
@@ -52,45 +49,56 @@ def get_check_list(directory, cdm_schema):
     return check_list
 
 
-def execute_checks(output_folder, check_list, results_schema, results_table="pydqd_results", batch_size=4):
+def execute_checks(spark, output_folder, check_list, results_schema, results_table="pydqd_results", batch_size=4):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    spark = SparkSession.builder.appName("PyDQD").getOrCreate()
-    spark.sql(f"DROP TABLE IF EXISTS {results_schema}.{results_table} PURGE")
-    ddl = f"""
-        CREATE TABLE {results_schema}.{results_table} (
-            num_violated_rows INT,
-            pct_violated_rows FLOAT,
-            num_denominator_rows INT,
-            execution_time FLOAT,
-            query_text STRING,
-            check_name STRING,
-            check_level STRING,
-            check_description STRING,
-            cdm_table_name STRING,
-            cdm_field_name STRING,
-            concept_id INT,
-            unit_concept_id INT,
-            sql_file STRING,
-            category STRING,
-            subcategory STRING,
-            context STRING,
-            warning STRING,
-            error STRING,
-            checkid STRING,
-            is_error INT,
-            not_applicable INT,
-            failed INT,
-            passed INT,
-            not_applicable_reason STRING,
-            threshold_value INTEGER,
-            notes_value STRING
-        ) STORED AS PARQUET
-        """
-    spark.sql(ddl)
+    existing_check_ids = []
+    try:
+        existing_check_ids_df = spark.sql(f"SELECT DISTINCT checkid FROM {results_schema}.{results_table}")
+        existing_check_ids = [row.checkid for row in existing_check_ids_df.collect()]
+    except Exception as select_error:
+        print(f"Error selecting existing checkIds: {str(select_error)}")
+    
+    if not existing_check_ids:
+        spark.sql(f"DROP TABLE IF EXISTS {results_schema}.{results_table} PURGE")
+        ddl = f"""
+            CREATE TABLE {results_schema}.{results_table} (
+                num_violated_rows INT,
+                pct_violated_rows FLOAT,
+                num_denominator_rows INT,
+                execution_time FLOAT,
+                query_text STRING,
+                check_name STRING,
+                check_level STRING,
+                check_description STRING,
+                cdm_table_name STRING,
+                cdm_field_name STRING,
+                concept_id INT,
+                unit_concept_id INT,
+                sql_file STRING,
+                category STRING,
+                subcategory STRING,
+                context STRING,
+                warning STRING,
+                error STRING,
+                checkid STRING,
+                is_error INT,
+                not_applicable INT,
+                failed INT,
+                passed INT,
+                not_applicable_reason STRING,
+                threshold_value INTEGER,
+                notes_value STRING
+            ) USING PARQUET
+            """
+        spark.sql(ddl)
 
+    full_num_checks = len(check_list)
+    check_list = [check for check in check_list if check["check_id"] not in existing_check_ids]
     num_checks = len(check_list)
+    print(f"Executing {num_checks} ({full_num_checks-num_checks} are done)...")
+    
     for i in tqdm(range(0, num_checks, batch_size), desc="Processing checks", unit=f"batch of {batch_size}"):
         batch = check_list[i:i + batch_size]
         union_sql = "\nUNION ALL\n".join(check["sql"] for check in batch)
@@ -102,30 +110,3 @@ def execute_checks(output_folder, check_list, results_schema, results_table="pyd
             with open(log_filename, 'w') as log_file:
                 log_file.write(f"Error inserting data: {str(insert_error)}")
             print(f"Error inserting data: {str(insert_error)}")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Data Quality Dashboard on pyspark.")
-    parser.add_argument("--conf", help="Path to spark.conf (optional).")
-    parser.add_argument("--cdm", required=True, help="Name of CDM schema.")
-    parser.add_argument("--results_schema", default="", help="Results schema.")
-    parser.add_argument("--results_table", default="pydqd_results", help="Results table in the results schema.")
-    parser.add_argument("--output", default=f"output_{datetime.now().strftime('%y%m%d-%H%M%S')}", help="Path to the output folder.")
-    
-    args = parser.parse_args()
-
-    if not (args.conf or args.cdm):
-        parser.print_help()
-        return
-
-    sql_folder = "queries_spark"
-    check_list = get_check_list(sql_folder, args.cdm)
-    
-    results_schema = args.results_schema
-    if not results_schema:
-        results_schema = args.cdm
-    execute_checks(args.output, check_list, results_schema, args.results_table)
-
-
-if __name__ == "__main__":
-    main()
