@@ -1,4 +1,3 @@
-
 -- check_name: measurePersonCompleteness
 -- check_level: TABLE
 -- checkDescription: TABLE
@@ -16,19 +15,19 @@ SELECT
   cte.num_violated_rows,
   cte.pct_violated_rows,
   cte.num_denominator_rows,
-  '' as execution_time,
-  '' as query_text,
-  'measurePersonCompleteness' as check_name,
-  'TABLE' as check_level,
-  'TABLE' as check_description,
-  'DRUG_EXPOSURE' as cdm_table_name,
-  'NA' as cdm_field_name,
-  'NA' as concept_id,
-  'NA' as unit_concept_id,
-  'table_person_completeness.sql' as sql_file,
-  'Completeness' as category,
-  '' as subcategory,
-  'Validation' as context,
+  CAST(NULL AS FLOAT) as execution_time,
+  CAST(NULL AS STRING) as query_text,
+  CAST('measurePersonCompleteness' AS STRING) as check_name,
+  CAST('TABLE' AS STRING) as check_level,
+  CAST('TABLE' AS STRING) as check_description,
+  CAST('DRUG_EXPOSURE' AS STRING) as cdm_table_name,
+  CAST(NULL AS STRING) as cdm_field_name,
+  CAST(NULL AS INTEGER) as concept_id,
+  CAST(NULL AS INTEGER) as unit_concept_id,
+  CAST('table_person_completeness.sql' AS STRING) as sql_file,
+  CAST('Completeness' AS STRING) as category,
+  CAST('' AS STRING) as subcategory,
+  CAST('Validation' AS STRING) context,
   '' as warning,
   '' as error,
   'table_measurepersoncompleteness_drug_exposure' as checkid,
@@ -36,9 +35,9 @@ SELECT
   0 as not_applicable,
   CASE WHEN (cte.pct_violated_rows * 100) > 0 THEN 1 ELSE 0 END as failed,
   CASE WHEN (cte.pct_violated_rows * 100) <= 0 THEN 1 ELSE 0 END as passed,
-  NULL as not_applicable_reason,
+  CAST(NULL AS STRING) as not_applicable_reason,
   0 as threshold_value,
-  NULL as notes_value
+  CAST(NULL AS STRING) as notes_value
 FROM (
   SELECT num_violated_rows, 
  CASE 

@@ -1,4 +1,3 @@
-
 -- check_name: isRequired
 -- check_level: FIELD
 -- checkDescription: FIELD
@@ -16,19 +15,19 @@ SELECT
   cte.num_violated_rows,
   cte.pct_violated_rows,
   cte.num_denominator_rows,
-  '' as execution_time,
-  '' as query_text,
-  'isRequired' as check_name,
-  'FIELD' as check_level,
-  'FIELD' as check_description,
-  'VISIT_DETAIL' as cdm_table_name,
-  'VISIT_DETAIL_START_DATE' as cdm_field_name,
-  'NA' as concept_id,
-  'NA' as unit_concept_id,
-  'field_is_not_nullable.sql' as sql_file,
-  'Conformance' as category,
-  'Relational' as subcategory,
-  'Validation' as context,
+  CAST(NULL AS FLOAT) as execution_time,
+  CAST(NULL AS STRING) as query_text,
+  CAST('isRequired' AS STRING) as check_name,
+  CAST('FIELD' AS STRING) as check_level,
+  CAST('FIELD' AS STRING) as check_description,
+  CAST('VISIT_DETAIL' AS STRING) as cdm_table_name,
+  CAST('VISIT_DETAIL_START_DATE' AS STRING) as cdm_field_name,
+  CAST(NULL AS INTEGER) as concept_id,
+  CAST(NULL AS INTEGER) as unit_concept_id,
+  CAST('field_is_not_nullable.sql' AS STRING) as sql_file,
+  CAST('Conformance' AS STRING) as category,
+  CAST('Relational' AS STRING) as subcategory,
+  CAST('Validation' AS STRING) context,
   '' as warning,
   '' as error,
   'field_isrequired_visit_detail_visit_detail_start_date' as checkid,
@@ -36,9 +35,9 @@ SELECT
   0 as not_applicable,
   CASE WHEN (cte.pct_violated_rows * 100) > 0 THEN 1 ELSE 0 END as failed,
   CASE WHEN (cte.pct_violated_rows * 100) <= 0 THEN 1 ELSE 0 END as passed,
-  NULL as not_applicable_reason,
+  CAST(NULL AS STRING) as not_applicable_reason,
   0 as threshold_value,
-  NULL as notes_value
+  CAST(NULL AS STRING) as notes_value
 FROM (
   SELECT num_violated_rows, 
  CASE 

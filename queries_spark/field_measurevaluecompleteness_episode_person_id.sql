@@ -1,4 +1,3 @@
-
 -- check_name: measureValueCompleteness
 -- check_level: FIELD
 -- checkDescription: FIELD
@@ -16,19 +15,19 @@ SELECT
   cte.num_violated_rows,
   cte.pct_violated_rows,
   cte.num_denominator_rows,
-  '' as execution_time,
-  '' as query_text,
-  'measureValueCompleteness' as check_name,
-  'FIELD' as check_level,
-  'FIELD' as check_description,
-  'EPISODE' as cdm_table_name,
-  'PERSON_ID' as cdm_field_name,
-  'NA' as concept_id,
-  'NA' as unit_concept_id,
-  'field_measure_value_completeness.sql' as sql_file,
-  'Completeness' as category,
-  '' as subcategory,
-  'Verification' as context,
+  CAST(NULL AS FLOAT) as execution_time,
+  CAST(NULL AS STRING) as query_text,
+  CAST('measureValueCompleteness' AS STRING) as check_name,
+  CAST('FIELD' AS STRING) as check_level,
+  CAST('FIELD' AS STRING) as check_description,
+  CAST('EPISODE' AS STRING) as cdm_table_name,
+  CAST('PERSON_ID' AS STRING) as cdm_field_name,
+  CAST(NULL AS INTEGER) as concept_id,
+  CAST(NULL AS INTEGER) as unit_concept_id,
+  CAST('field_measure_value_completeness.sql' AS STRING) as sql_file,
+  CAST('Completeness' AS STRING) as category,
+  CAST('' AS STRING) as subcategory,
+  CAST('Verification' AS STRING) context,
   '' as warning,
   '' as error,
   'field_measurevaluecompleteness_episode_person_id' as checkid,
@@ -36,9 +35,9 @@ SELECT
   0 as not_applicable,
   CASE WHEN (cte.pct_violated_rows * 100) > 0 THEN 1 ELSE 0 END as failed,
   CASE WHEN (cte.pct_violated_rows * 100) <= 0 THEN 1 ELSE 0 END as passed,
-  NULL as not_applicable_reason,
+  CAST(NULL AS STRING) as not_applicable_reason,
   0 as threshold_value,
-  NULL as notes_value
+  CAST(NULL AS STRING) as notes_value
 FROM (
   SELECT num_violated_rows, 
  CASE 
