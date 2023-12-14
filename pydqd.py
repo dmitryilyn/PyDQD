@@ -110,3 +110,10 @@ def execute_checks(spark, output_folder, check_list, results_schema, results_tab
             with open(log_filename, 'w') as log_file:
                 log_file.write(f"Error inserting data: {str(insert_error)}")
             print(f"Error inserting data: {str(insert_error)}")
+
+
+def get_metadata(spark, cdm_schema):
+    metadata_df = spark.sql(f"SELECT * FROM {cdm_schema}.metadata")
+    metadata = {row.name.upper(): row.value for row in metadata_df.collect()}
+    
+    return metadata
