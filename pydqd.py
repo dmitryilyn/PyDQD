@@ -122,7 +122,17 @@ def get_metadata(spark, cdm_schema):
     return metadata_dict
 
 
-def get_check_results(spark, results_schema, results_table="pydqd_results"):
+def get_check_sql(check_id, cdm_schema, queries_path="queries_spark"):
+    sql = ""
+    file_path = os.path.join(queries_path, f"{check_id}.sql")
+    with open(file_path, "r") as file:
+        sql = file.read()
+        sql = re.sub(r"-- .+\n", "", re.sub(r"\{cdm_schema\}", cdm_schema, sql))
+    
+    return sql
+
+
+def get_check_results(spark, cdm_schema, results_schema, results_table="pydqd_results", queries_path="queries_spark"):
     results_df = spark.sql(f"select * from {results_schema}.{results_table}")
     check_results = []
     for row in tqdm(results_df.collect()):
@@ -130,7 +140,8 @@ def get_check_results(spark, results_schema, results_table="pydqd_results"):
         for col, value in row.asDict().items():
             if col.lower() == "checkid":
                 check_result["checkId"] = value
-            else:
+                check_result["QUERY_TEXT"] = get_check_sql(value, cdm_schema, queries_path)
+            elif col.upper() != "QUERY_TEXT":
                 check_result[col.upper()] = value
         check_results.append(check_result)
     
@@ -185,16 +196,16 @@ def get_results_overview(spark, results_schema, results_table="pydqd_results"):
     return results_overview
 
 
-def generate_json_report(spark, output_folder, cdm_schema, results_schema, results_table="pydqd_results", file_name="dq_results.json"):
+def generate_json_report(spark, output_folder, cdm_schema, results_schema, results_table="pydqd_results", file_name="dq_results.json", queries_path="queries_spark"):
     metadata = get_metadata(spark, cdm_schema)
-    check_results = get_check_results(spark, results_schema, results_table)
+    check_results = get_check_results(spark, cdm_schema, results_schema, results_table, queries_path)
     results_overview = get_results_overview(spark, results_schema, results_table)
 
     json_report = {
         "startTimestamp": [""],
         "endTimestamp": [""],
         "executionTime": [""],
-        "Metadata": metadata,
+        "Metadata": [metadata],
         "CheckResults": check_results,
         "Overview": results_overview
     }
