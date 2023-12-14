@@ -2,6 +2,7 @@ import os
 import re
 import json
 from tqdm import tqdm
+from datetime import date
 
 
 def get_check_list(directory, cdm_schema):
@@ -115,7 +116,7 @@ def execute_checks(spark, output_folder, check_list, results_schema, results_tab
 
 def get_metadata(spark, cdm_schema):
     metadata_df = spark.sql(f"select * from {cdm_schema}.cdm_source")
-    metadata_dict = {col.upper(): value for col, value in metadata_df.first().asDict().items() if col.upper() not in ["RULE_ID", "LOAD_TABLE_ID", "LOAD_ROW_ID"]}
+    metadata_dict = {col.upper(): str(value) if isinstance(value, date) else value for col, value in metadata_df.first().asDict().items() if col.upper() not in ["RULE_ID", "LOAD_TABLE_ID", "LOAD_ROW_ID"]}
     metadata_dict["DQD_VERSION"] = "2.0.0"
     
     return metadata_dict

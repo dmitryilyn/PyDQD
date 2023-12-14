@@ -14,4 +14,4 @@ execute_checks(spark, output_folder, check_list, results_schema)
 #check_results = get_check_results(spark, results_schema)
 #results_overview = get_results_overview(spark, results_schema)
 
-generate_json_report(spark, cdm_schema, results_schema)
+generate_json_report(spark, output_folder, cdm_schema, results_schema)
