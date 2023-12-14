@@ -113,7 +113,8 @@ def execute_checks(spark, output_folder, check_list, results_schema, results_tab
 
 
 def get_metadata(spark, cdm_schema):
-    metadata_df = spark.sql(f"SELECT * FROM {cdm_schema}.metadata")
-    metadata = {row.name.upper(): row.value for row in metadata_df.collect()}
+    metadata_df = spark.sql(f"select * from {cdm_schema}.cdm_source")
+    metadata_dict = {col.upper(): value for col, value in metadata_df.first().asDict().items()}
+    metadata_dict["DQD_VERSION"] = "2.0.0"
     
-    return metadata
+    return metadata_dict
