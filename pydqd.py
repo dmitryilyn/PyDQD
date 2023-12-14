@@ -123,7 +123,7 @@ def get_metadata(spark, cdm_schema):
 def get_check_results(spark, results_schema, results_table="pydqd_results"):
     results_df = spark.sql(f"select * from {results_schema}.{results_table}")
     check_results = []
-    for row in results_df.collect():
+    for row in tqdm(results_df.collect()):
         check_result = {}
         for col, value in row.asDict().items():
             if col.lower() == "checkid":
@@ -133,3 +133,51 @@ def get_check_results(spark, results_schema, results_table="pydqd_results"):
         check_results.append(check_result)
     
     return check_results
+
+
+def get_results_overview(spark, results_schema, results_table="pydqd_results"):
+    sql_query = f'''
+    SELECT 
+        COUNT(*) AS countTotal,
+        SUM(passed) AS countPassed,
+        SUM(is_error) AS countErrorFailed,
+        SUM(failed) AS countThresholdFailed,
+        SUM(is_error OR failed) AS countOverallFailed,
+        (SUM(passed) / COUNT(*)) * 100 AS percentPassed,
+        (SUM(is_error OR failed) / COUNT(*)) * 100 AS percentFailed,
+        SUM(category = 'Plausibility') AS countTotalPlausibility,
+        SUM(category = 'Conformance') AS countTotalConformance,
+        SUM(category = 'Completeness') AS countTotalCompleteness,
+        SUM((is_error OR failed) AND category = 'Plausibility') AS countFailedPlausibility,
+        SUM((is_error OR failed) AND category = 'Conformance') AS countFailedConformance,
+        SUM((is_error OR failed) AND category = 'Completeness') AS countFailedCompleteness,
+        SUM(passed AND category = 'Plausibility') AS countPassedPlausibility,
+        SUM(passed AND category = 'Conformance') AS countPassedConformance,
+        SUM(passed AND category = 'Completeness') AS countPassedCompleteness
+    FROM {results_schema}.{results_table}
+    '''
+    results_df = spark.sql(sql_query)
+    results_overview = {col.lower(): value for col, value in results_df.first().asDict().items()}
+
+    field_names = [
+        "countTotal",
+        "countPassed",
+        "countErrorFailed",
+        "countThresholdFailed",
+        "countOverallFailed",
+        "percentPassed",
+        "percentFailed",
+        "countTotalPlausibility",
+        "countTotalConformance",
+        "countTotalCompleteness",
+        "countFailedPlausibility",
+        "countFailedConformance",
+        "countFailedCompleteness",
+        "countPassedPlausibility",
+        "countPassedConformance",
+        "countPassedCompleteness"
+    ]
+    for field_name in field_names:
+        results_overview[field_name] = [results_overview.pop(field_name.lower())]
+    
+    return results_overview
