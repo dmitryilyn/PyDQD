@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from tqdm import tqdm
 
 
@@ -181,3 +182,23 @@ def get_results_overview(spark, results_schema, results_table="pydqd_results"):
         results_overview[field_name] = [results_overview.pop(field_name.lower())]
     
     return results_overview
+
+
+def generate_json_report(spark, output_folder, cdm_schema, results_schema, results_table="pydqd_results", file_name="dq_results.json"):
+    metadata = get_metadata(spark, cdm_schema)
+    check_results = get_check_results(spark, results_schema, results_table)
+    results_overview = get_results_overview(spark, results_schema, results_table)
+
+    json_report = {
+        "startTimestamp": [""],
+        "endTimestamp": [""],
+        "executionTime": [""],
+        "Metadata": metadata,
+        "CheckResults": check_results,
+        "Overview": results_overview
+    }
+
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+    with open(os.path.join(output_folder, file_name), "w") as json_file:
+        json.dump(json_report, json_file)
