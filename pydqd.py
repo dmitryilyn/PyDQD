@@ -139,21 +139,21 @@ def get_results_overview(spark, results_schema, results_table="pydqd_results"):
     sql_query = f'''
     SELECT 
         COUNT(*) AS countTotal,
-        SUM(passed) AS countPassed,
-        SUM(is_error) AS countErrorFailed,
-        SUM(failed) AS countThresholdFailed,
-        SUM(is_error OR failed) AS countOverallFailed,
-        (SUM(passed) / COUNT(*)) * 100 AS percentPassed,
-        (SUM(is_error OR failed) / COUNT(*)) * 100 AS percentFailed,
+        SUM(passed = 1) AS countPassed,
+        SUM(is_error = 1) AS countErrorFailed,
+        SUM(failed = 1) AS countThresholdFailed,
+        SUM((is_error = 1 OR failed = 1)) AS countOverallFailed,
+        (SUM(passed = 1) / COUNT(*)) * 100 AS percentPassed,
+        (SUM((is_error = 1 OR failed = 1)) / COUNT(*)) * 100 AS percentFailed,
         SUM(category = 'Plausibility') AS countTotalPlausibility,
         SUM(category = 'Conformance') AS countTotalConformance,
         SUM(category = 'Completeness') AS countTotalCompleteness,
-        SUM((is_error OR failed) AND category = 'Plausibility') AS countFailedPlausibility,
-        SUM((is_error OR failed) AND category = 'Conformance') AS countFailedConformance,
-        SUM((is_error OR failed) AND category = 'Completeness') AS countFailedCompleteness,
-        SUM(passed AND category = 'Plausibility') AS countPassedPlausibility,
-        SUM(passed AND category = 'Conformance') AS countPassedConformance,
-        SUM(passed AND category = 'Completeness') AS countPassedCompleteness
+        SUM((is_error = 1 OR failed = 1) AND category = 'Plausibility') AS countFailedPlausibility,
+        SUM((is_error = 1 OR failed = 1) AND category = 'Conformance') AS countFailedConformance,
+        SUM((is_error = 1 OR failed = 1) AND category = 'Completeness') AS countFailedCompleteness,
+        SUM(passed = 1 AND category = 'Plausibility') AS countPassedPlausibility,
+        SUM(passed = 1 AND category = 'Conformance') AS countPassedConformance,
+        SUM(passed = 1 AND category = 'Completeness') AS countPassedCompleteness
     FROM {results_schema}.{results_table}
     '''
     results_df = spark.sql(sql_query)
