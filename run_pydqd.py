@@ -11,7 +11,7 @@ check_list = get_check_list("queries_spark", cdm_schema)
 execute_checks(spark, output_folder, check_list, results_schema)
 
 #metadata = get_metadata(spark, cdm_schema)
-#check_results = get_check_results(spark, results_schema)
+#check_results = get_check_results(spark, cdm_schema, results_schema)
 #results_overview = get_results_overview(spark, results_schema)
 
 generate_json_report(spark, output_folder, cdm_schema, results_schema)
