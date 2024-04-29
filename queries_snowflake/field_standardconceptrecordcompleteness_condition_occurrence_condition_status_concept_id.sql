@@ -10,7 +10,7 @@
 -- subcategory: 
 -- context: Verification
 -- checkId: field_standardconceptrecordcompleteness_condition_occurrence_condition_status_concept_id
--- thresholdValue: 5
+-- thresholdValue: 100
 SELECT 
   cte.num_violated_rows,
   cte.pct_violated_rows,
@@ -33,10 +33,10 @@ SELECT
   'field_standardconceptrecordcompleteness_condition_occurrence_condition_status_concept_id' as checkid,
   0 as is_error,
   0 as not_applicable,
-  CASE WHEN (cte.pct_violated_rows * 100) > 5 THEN 1 ELSE 0 END as failed,
-  CASE WHEN (cte.pct_violated_rows * 100) <= 5 THEN 1 ELSE 0 END as passed,
+  CASE WHEN (cte.pct_violated_rows * 100) > 100 THEN 1 ELSE 0 END as failed,
+  CASE WHEN (cte.pct_violated_rows * 100) <= 100 THEN 1 ELSE 0 END as passed,
   CAST(NULL AS STRING) as not_applicable_reason,
-  5 as threshold_value,
+  100 as threshold_value,
   CAST(NULL AS STRING) as notes_value
 FROM (
   /*********

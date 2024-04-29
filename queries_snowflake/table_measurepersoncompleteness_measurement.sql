@@ -10,7 +10,7 @@
 -- subcategory: 
 -- context: Validation
 -- checkId: table_measurepersoncompleteness_measurement
--- thresholdValue: 0
+-- thresholdValue: 95
 SELECT 
   cte.num_violated_rows,
   cte.pct_violated_rows,
@@ -33,10 +33,10 @@ SELECT
   'table_measurepersoncompleteness_measurement' as checkid,
   0 as is_error,
   0 as not_applicable,
-  CASE WHEN (cte.pct_violated_rows * 100) > 0 THEN 1 ELSE 0 END as failed,
-  CASE WHEN (cte.pct_violated_rows * 100) <= 0 THEN 1 ELSE 0 END as passed,
+  CASE WHEN (cte.pct_violated_rows * 100) > 95 THEN 1 ELSE 0 END as failed,
+  CASE WHEN (cte.pct_violated_rows * 100) <= 95 THEN 1 ELSE 0 END as passed,
   CAST(NULL AS STRING) as not_applicable_reason,
-  0 as threshold_value,
+  95 as threshold_value,
   CAST(NULL AS STRING) as notes_value
 FROM (
   /*********

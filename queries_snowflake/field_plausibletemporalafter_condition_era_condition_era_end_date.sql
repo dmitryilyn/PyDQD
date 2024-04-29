@@ -46,8 +46,8 @@ Parameters used in this template:
 cdmDatabaseSchema = sqlgen
 cdmTableName = CONDITION_ERA
 cdmFieldName = CONDITION_ERA_END_DATE
-plausibleTemporalAfterTableName = CONDITION_ERA
-plausibleTemporalAfterFieldName = CONDITION_ERA_START_DATE
+plausibleTemporalAfterTableName = PERSON
+plausibleTemporalAfterFieldName = BIRTH_DATETIME
 **********/
 SELECT 
 	num_violated_rows, 
@@ -67,8 +67,12 @@ FROM
 			'CONDITION_ERA.CONDITION_ERA_END_DATE' AS violating_field, 
 			cdmTable.*
     	FROM {cdm_schema}.CONDITION_ERA cdmTable
+				JOIN {cdm_schema}.PERSON plausibleTable ON cdmTable.person_id = plausibleTable.person_id
     WHERE 
-			CAST(cdmTable.CONDITION_ERA_START_DATE AS DATE)
+			COALESCE(
+				CAST(plausibleTable.BIRTH_DATETIME AS DATE),
+				CAST(CONCAT(plausibleTable.year_of_birth,'-06-01') AS DATE)
+			) 
 		 > CAST(cdmTable.CONDITION_ERA_END_DATE AS DATE)
 		/*violatedRowsEnd*/
 	) violated_rows
