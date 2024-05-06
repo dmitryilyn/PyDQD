@@ -1,0 +1,23 @@
+2024-05-06 15:38:52	[Main thread]	INFO	DataQualityDashboard	executeDqChecks	CDM Tables skipped: CONCEPT, VOCABULARY, CONCEPT_ANCESTOR, CONCEPT_RELATIONSHIP, CONCEPT_CLASS, CONCEPT_SYNONYM, RELATIONSHIP, DOMAIN
+2024-05-06 15:38:52	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: cdmTable
+2024-05-06 15:38:52	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: measurePersonCompleteness
+2024-05-06 15:38:53	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: measureConditionEraCompleteness
+2024-05-06 15:38:53	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: cdmField
+2024-05-06 15:38:58	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: isRequired
+2024-05-06 15:39:00	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: cdmDatatype
+2024-05-06 15:39:03	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: isPrimaryKey
+2024-05-06 15:39:03	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: isForeignKey
+2024-05-06 15:39:05	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: fkDomain
+2024-05-06 15:39:06	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: fkClass
+2024-05-06 15:39:06	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: isStandardValidConcept
+2024-05-06 15:39:07	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: measureValueCompleteness
+2024-05-06 15:39:12	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: standardConceptRecordCompleteness
+2024-05-06 15:39:13	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: sourceConceptRecordCompleteness
+2024-05-06 15:39:13	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: sourceValueCompleteness
+2024-05-06 15:39:13	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleValueLow
+2024-05-06 15:39:14	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleValueHigh
+2024-05-06 15:39:15	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleTemporalAfter
+2024-05-06 15:39:16	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleDuringLife
+2024-05-06 15:39:16	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: withinVisitDates
+2024-05-06 15:39:17	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleGender
+2024-05-06 15:39:20	[Main thread]	INFO	DataQualityDashboard	FUN	Processing check description: plausibleUnitConceptIds
